@@ -64,14 +64,14 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 
 	err := gitCheckoutCmd.Run()
 	if err != nil {
-		return fmt.Errorf("failed to execute git checkout command, %w", err)
+		return fmt.Errorf("failed to execute git checkout command")
 	}
 
 	gitMergeCommand := createGitMergeBranchCmd(baseBranchName)
 
 	err = gitMergeCommand.Run()
 	if err != nil {
-		return fmt.Errorf("failed to merge commits. possible merge conflict error, %w", err)
+		return fmt.Errorf("failed to merge commits, possible merge conflict error")
 	}
 
 	// Checkout back to the base branch
@@ -79,7 +79,7 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 
 	err = gitCheckoutBackCmd.Run()
 	if err != nil {
-		return fmt.Errorf("failed to checkout back to base branch, %w", err)
+		return fmt.Errorf("failed to checkout back to base branch")
 	}
 
 	return nil
@@ -131,6 +131,9 @@ func HandlePipeInput(targetBranch string) error {
 }
 
 func HandleCLIInput(args []string) error {
+
+	fmt.Println("here")
+
 	var checkoutBranch = "dev"
 
 	if len(args) > 1 {
@@ -149,10 +152,10 @@ func HandleCLIInput(args []string) error {
 	err = processGitCommands(baseBranchName, targetBranchName)
 
 	if err != nil {
+		fmt.Println(err)
 		return nil
 	}
 
 	fmt.Println("changes merged to ", targetBranchName)
-
 	return nil
 }
