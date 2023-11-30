@@ -52,6 +52,16 @@ func createGitMergeBranchCmd(sourceBranch string) *exec.Cmd {
 	return exec.Command("git", "merge", sourceBranch)
 }
 
+func getDefaultCheckoutBranch(args []string) string {
+	var checkoutBranch = "dev"
+
+	if len(args) > 1 {
+		checkoutBranch = args[1:][0]
+	}
+
+	return checkoutBranch
+}
+
 func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 
 	var gitCheckoutCmd *exec.Cmd
@@ -64,7 +74,7 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 
 	err := gitCheckoutCmd.Run()
 	if err != nil {
-		return fmt.Errorf("failed to execute git checkout command")
+		return fmt.Errorf("failed to execute git checkout command, make sure to commit all changes first")
 	}
 
 	gitMergeCommand := createGitMergeBranchCmd(baseBranchName)
@@ -86,11 +96,8 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 }
 
 func HandlePipeInput(args []string) error {
-	var checkoutBranch = "dev"
 
-	if len(args) > 1 {
-		checkoutBranch = args[1:][0]
-	}
+	checkoutBranch := getDefaultCheckoutBranch(args)
 
 	// Read input from pipe
 	scanner := bufio.NewScanner(os.Stdin)
@@ -132,12 +139,7 @@ func HandlePipeInput(args []string) error {
 
 func HandleCLIInput(args []string) error {
 
-	var checkoutBranch = "dev"
-
-	if len(args) > 1 {
-		checkoutBranch = args[1:][0]
-	}
-
+	checkoutBranch := getDefaultCheckoutBranch(args)
 	// Get the current branch
 	baseBranchName, err := getCurrentBranch()
 
