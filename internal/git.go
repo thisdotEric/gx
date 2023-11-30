@@ -152,7 +152,6 @@ func HandleCLIInput(args []string) error {
 	err = processGitCommands(baseBranchName, targetBranchName)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil
 	}
 
