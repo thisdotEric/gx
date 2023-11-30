@@ -132,8 +132,6 @@ func HandlePipeInput(targetBranch string) error {
 
 func HandleCLIInput(args []string) error {
 
-	fmt.Println("here")
-
 	var checkoutBranch = "dev"
 
 	if len(args) > 1 {
@@ -156,6 +154,6 @@ func HandleCLIInput(args []string) error {
 		return nil
 	}
 
-	fmt.Println("changes merged to ", targetBranchName)
+	fmt.Println("changes merged to", targetBranchName)
 	return nil
 }
