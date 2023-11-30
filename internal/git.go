@@ -11,7 +11,6 @@ import (
 )
 
 func getBranchName(input string) (string, error) {
-
 	re := regexp.MustCompile(`\[(.*?)\]`)
 	match := re.FindStringSubmatch(input)
 
@@ -24,12 +23,23 @@ func getBranchName(input string) (string, error) {
 }
 
 func branchExists(branch string) bool {
-
 	// Check if dev branch already exists
 	devBranchChecker := exec.Command("git", "show-ref", "refs/heads/"+branch)
 	output, _ := devBranchChecker.Output()
 
 	return string(output) != ""
+}
+
+func createGitCheckoutBranchCmd(targetBranch string, createNewBranch bool) *exec.Cmd {
+	if createNewBranch {
+		return exec.Command("git", "checkout", "-b", targetBranch)
+	}
+
+	return exec.Command("git", "checkout", targetBranch)
+}
+
+func createGitMergeBranchCmd(sourceBranch string) *exec.Cmd {
+	return exec.Command("git", "merge", sourceBranch)
 }
 
 func HandlePipeInput() {
@@ -63,9 +73,9 @@ func HandlePipeInput() {
 
 			// dev branch already exists
 			if branchExists(devBranchName) {
-				gitCheckoutCmd = exec.Command("git", "checkout", devBranchName)
+				gitCheckoutCmd = createGitCheckoutBranchCmd(devBranchName, false)
 			} else {
-				gitCheckoutCmd = exec.Command("git", "checkout", "-b", devBranchName)
+				gitCheckoutCmd = createGitCheckoutBranchCmd(devBranchName, true)
 			}
 
 			// Run the command
@@ -76,7 +86,7 @@ func HandlePipeInput() {
 			}
 
 			// Merge the base branch to the dev branch
-			gitMergeCommand := exec.Command("git", "merge", branchName)
+			gitMergeCommand := createGitMergeBranchCmd(branchName)
 
 			// Run the command
 			mergeErr := gitMergeCommand.Run()
@@ -86,7 +96,7 @@ func HandlePipeInput() {
 			}
 
 			// Checkout back to the base branch
-			gitCheckoutBackCmd := exec.Command("git", "checkout", branchName)
+			gitCheckoutBackCmd := createGitCheckoutBranchCmd(devBranchName, false)
 
 			// Run the command
 			checkoutBackErr := gitCheckoutBackCmd.Run()
