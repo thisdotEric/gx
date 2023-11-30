@@ -19,15 +19,25 @@ func getBranchName(input string) (string, error) {
 	} else {
 		return "", errors.New("git branch name not found")
 	}
-
 }
 
 func branchExists(branch string) bool {
-	// Check if dev branch already exists
-	devBranchChecker := exec.Command("git", "show-ref", "refs/heads/"+branch)
-	output, _ := devBranchChecker.Output()
+	branchChecker := exec.Command("git", "show-ref", "refs/heads/"+branch)
+	output, _ := branchChecker.Output()
 
 	return string(output) != ""
+}
+
+func getCurrentBranch() (string, error) {
+	cmd := exec.Command("git", "symbolic-ref", "--short", "HEAD")
+
+	output, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("failed to get current branch: %w", err)
+	}
+
+	branch := strings.TrimSpace(string(output))
+	return branch, nil
 }
 
 func createGitCheckoutBranchCmd(targetBranch string, createNewBranch bool) *exec.Cmd {
@@ -57,7 +67,6 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 		return fmt.Errorf("failed to execute git checkout command, %w", err)
 	}
 
-	// Merge the base branch to the dev branch
 	gitMergeCommand := createGitMergeBranchCmd(baseBranchName)
 
 	err = gitMergeCommand.Run()
@@ -122,13 +131,28 @@ func HandlePipeInput(targetBranch string) error {
 }
 
 func HandleCLIInput(args []string) error {
-
 	var checkoutBranch = "dev"
 
 	if len(args) > 1 {
 		checkoutBranch = args[1:][0]
-		fmt.Println(checkoutBranch)
 	}
+
+	// Get the current branch
+	baseBranchName, err := getCurrentBranch()
+
+	if err != nil {
+		return nil
+	}
+
+	targetBranchName := baseBranchName + "-" + checkoutBranch
+
+	err = processGitCommands(baseBranchName, targetBranchName)
+
+	if err != nil {
+		return nil
+	}
+
+	fmt.Println("changes merged to ", targetBranchName)
 
 	return nil
 }
