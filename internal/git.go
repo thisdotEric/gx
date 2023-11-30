@@ -42,7 +42,41 @@ func createGitMergeBranchCmd(sourceBranch string) *exec.Cmd {
 	return exec.Command("git", "merge", sourceBranch)
 }
 
-func HandlePipeInput(targetBranch string) {
+func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
+
+	var gitCheckoutCmd *exec.Cmd
+
+	if branchExists(targetCheckoutBranch) {
+		gitCheckoutCmd = createGitCheckoutBranchCmd(targetCheckoutBranch, false)
+	} else {
+		gitCheckoutCmd = createGitCheckoutBranchCmd(targetCheckoutBranch, true)
+	}
+
+	err := gitCheckoutCmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to execute git checkout command, %w", err)
+	}
+
+	// Merge the base branch to the dev branch
+	gitMergeCommand := createGitMergeBranchCmd(baseBranchName)
+
+	err = gitMergeCommand.Run()
+	if err != nil {
+		return fmt.Errorf("failed to merge commits. possible merge conflict error, %w", err)
+	}
+
+	// Checkout back to the base branch
+	gitCheckoutBackCmd := createGitCheckoutBranchCmd(baseBranchName, false)
+
+	err = gitCheckoutBackCmd.Run()
+	if err != nil {
+		return fmt.Errorf("failed to checkout back to base branch, %w", err)
+	}
+
+	return nil
+}
+
+func HandlePipeInput(targetBranch string) error {
 	var checkoutBranch = "dev"
 
 	if targetBranch != "" {
@@ -55,72 +89,39 @@ func HandlePipeInput(targetBranch string) {
 	if scanner.Scan() {
 		// Process the first line from the pipe
 		line := scanner.Text()
-
 		match, err := getBranchName(line)
 
 		// Not a commit operation
 		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
+			return err
 		}
 
 		branchName := strings.Split(match, " ")[0]
-
 		targetCheckoutBranch := branchName + "-" + checkoutBranch
 
-		var gitCheckoutCmd *exec.Cmd
+		err = processGitCommands(branchName, targetCheckoutBranch)
 
-		if branchExists(targetCheckoutBranch) {
-			gitCheckoutCmd = createGitCheckoutBranchCmd(targetCheckoutBranch, false)
-		} else {
-			gitCheckoutCmd = createGitCheckoutBranchCmd(targetCheckoutBranch, true)
+		if err != nil {
+			return err
 		}
 
-		// Run the command
-		checkoutErr := gitCheckoutCmd.Run()
-		if checkoutErr != nil {
-			fmt.Println("Failed to execute git checkout command", err)
-			os.Exit(1)
-		}
-
-		// Merge the base branch to the dev branch
-		gitMergeCommand := createGitMergeBranchCmd(branchName)
-
-		// Run the command
-		mergeErr := gitMergeCommand.Run()
-		if mergeErr != nil {
-			fmt.Println("Failed to merge commits. Possible merge conflict error.")
-			os.Exit(1)
-		}
-
-		// Checkout back to the base branch
-		gitCheckoutBackCmd := createGitCheckoutBranchCmd(branchName, false)
-
-		// Run the command
-		checkoutBackErr := gitCheckoutBackCmd.Run()
-		if checkoutBackErr != nil {
-			fmt.Println("Failed to checkout back to base branch")
-			os.Exit(1)
-		}
-
-		// First line of the git commit output
 		fmt.Println(line)
 		// Print the rest of the actual output of the 'git commit' command
 		for scanner.Scan() {
 			line := scanner.Text()
 			fmt.Println(line)
 		}
-
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Fprintln(os.Stderr, "Error reading standard input:", err)
-		os.Exit(1)
+		return fmt.Errorf("error reading standard input: %w", err)
 	}
+
+	return nil
 
 }
 
-func HandleCLIInput(args []string) {
+func HandleCLIInput(args []string) error {
 
 	var checkoutBranch = "dev"
 
@@ -129,6 +130,5 @@ func HandleCLIInput(args []string) {
 		fmt.Println(checkoutBranch)
 	}
 
-	HandlePipeInput("someone")
-
+	return nil
 }
