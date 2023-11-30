@@ -85,11 +85,11 @@ func processGitCommands(baseBranchName, targetCheckoutBranch string) error {
 	return nil
 }
 
-func HandlePipeInput(targetBranch string) error {
+func HandlePipeInput(args []string) error {
 	var checkoutBranch = "dev"
 
-	if targetBranch != "" {
-		checkoutBranch = targetBranch
+	if len(args) > 1 {
+		checkoutBranch = args[1:][0]
 	}
 
 	// Read input from pipe

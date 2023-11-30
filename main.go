@@ -14,7 +14,7 @@ func main() {
 
 	// Check if the app is used to receive pipe outputs
 	if (stat.Mode() & os.ModeCharDevice) == 0 {
-		err = internal.HandlePipeInput("")
+		err = internal.HandlePipeInput(os.Args)
 	} else {
 		err = internal.HandleCLIInput(os.Args)
 	}
