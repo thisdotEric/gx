@@ -1,3 +1,3 @@
-module github.com/thisdotEric/gitxtend
+module github.com/thisdotEric/gx
 
 go 1.19

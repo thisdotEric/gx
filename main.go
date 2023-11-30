@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/thisdotEric/gitxtend/internal"
+	"github.com/thisdotEric/gx/internal"
 )
 
 func main() {
