@@ -1,1 +1,1 @@
-# gitxtend
+# gx
