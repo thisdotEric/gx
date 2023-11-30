@@ -1,5 +1,5 @@
 
-PROGRAM_NAME := gitx
+PROGRAM_NAME := gx
 
 # Directory where the executable will be installed
 INSTALL_DIR := /usr/local/bin
