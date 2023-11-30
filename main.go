@@ -59,6 +59,7 @@ func main() {
 		checkoutErr := gitCheckoutCmd.Run()
 		if checkoutErr != nil {
 			fmt.Println("Failed to execute git checkout command", err)
+			os.Exit(1)
 		}
 
 		// Merge the base branch to the dev branch
@@ -68,6 +69,7 @@ func main() {
 		mergeErr := gitMergeCommand.Run()
 		if mergeErr != nil {
 			fmt.Println("Failed to merge commits. Possible merge conflict error.")
+			os.Exit(1)
 		}
 
 		// Checkout back to the base branch
@@ -77,6 +79,7 @@ func main() {
 		checkoutBackErr := gitCheckoutBackCmd.Run()
 		if checkoutBackErr != nil {
 			fmt.Println("Failed to checkout back to base branch")
+			os.Exit(1)
 		}
 
 		// First line of the git commit output
