@@ -1,12 +1,13 @@
 # gx
 
-Effortless branching and merging for lazy devs.
+Effortless git branching and merging for lazy devs.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Usage](#usage)
 - [Contributing](#contributing)
+- [Limitations](#limitations)
 - [License](#license)
 
 ## Introduction
@@ -36,6 +37,10 @@ will create the `feat/#111-balances-dev` branch incorporating all the changes.
 `gx` defaults to branching out using 'dev' if you don't provide a branch name explicitly.
 
 ## Contributing
+
+WIP
+
+## Limitations
 
 WIP
 

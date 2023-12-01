@@ -21,6 +21,18 @@ func getBranchName(input string) (string, error) {
 	}
 }
 
+func isGitRepo(dir string) bool {
+	cmd := exec.Command("git", "rev-parse", "--is-inside-work-tree")
+	cmd.Dir = dir
+
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return false
+	}
+
+	return strings.TrimSpace(string(output)) == "true"
+}
+
 func branchExists(branch string) bool {
 	branchChecker := exec.Command("git", "show-ref", "refs/heads/"+branch)
 	output, _ := branchChecker.Output()
@@ -139,6 +151,11 @@ func HandlePipeInput(args []string) error {
 
 func HandleCLIInput(args []string) error {
 
+	currentDir := "."
+	if !isGitRepo(currentDir) {
+		return fmt.Errorf("not a git repo")
+	}
+
 	checkoutBranch := getDefaultCheckoutBranch(args)
 	// Get the current branch
 	baseBranchName, err := getCurrentBranch()
@@ -148,7 +165,6 @@ func HandleCLIInput(args []string) error {
 	}
 
 	targetBranchName := baseBranchName + "-" + checkoutBranch
-
 	err = processGitCommands(baseBranchName, targetBranchName)
 
 	if err != nil {
