@@ -25,6 +25,23 @@ The name `gx` has no particular meaning.
 1. Dowload the executable from the [releases page](https://github.com/thisdotEric/gx/releases/tag/windows).
 2. Follow this [steps](https://stackoverflow.com/a/41895179) to make `gx` globally available on your windows command line.
 
+**Linux and macOS**
+
+1. Clone the repository or download the source code.
+2. Build the `gx` executable using the following commands:
+    ```bash
+    make build
+    ```
+3. Install `gx` globally on your system:
+    ```bash
+    make install
+    ```
+    This requires administrative privileges, so you might need to enter your password.
+4. Optionally, you can clean up the generated files after installation:
+    ```bash
+    make clean
+    ```
+
 ## Usage
 
 Suppose you are on the `feat/#111-balances` feature branch. Running the following command:
