@@ -12,7 +12,7 @@ Effortless git branching and merging for lazy devs.
 
 ## Introduction
 
-`gx` essentially automates my Git workflow at my day job. The idea is to consistently work on the cleanest branch from the main or master branch. When it's time to merge this clean branch (or feature branch) into the shared development environment, you simply branch out and append '-dev' (or your choice identifier) to the branch. This desire for automation, driven by my laziness, led to the creation of `gx`.
+`gx` essentially automates my Git workflow at my day job. The idea is to consistently work on the cleanest branch from the main or master branch. When it's time to merge this clean branch (or feature branch) into the shared development environment, you simply branch out and append '-dev' (or your choice identifier) to the branch. This desire for automation led to the creation of `gx`.
 
 `gx` is designed to minimize the risk of unintentionally bringing unwanted code from the shared development environment to staging, release or, worse, directly to your master branch. Simple yet effective.
 
