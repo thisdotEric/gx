@@ -5,6 +5,7 @@ Effortless git branching and merging for lazy devs.
 ## Table of Contents
 
 - [Introduction](#introduction)
+- [Installation](#installation)
 - [Usage](#usage)
 - [Limitations](#limitations)
 - [License](#license)
@@ -16,6 +17,13 @@ Effortless git branching and merging for lazy devs.
 `gx` is designed to minimize the risk of unintentionally bringing unwanted code from the shared development environment to staging, release or, worse, directly to your master branch. Simple yet effective.
 
 The name `gx` has no particular meaning.
+
+## Installation
+
+**Windows**
+
+1. Dowload the executable from the [releases page](https://github.com/thisdotEric/gx/releases/tag/windows).
+2. Follow this [steps](https://stackoverflow.com/a/41895179) to make `gx` globally available on your windows command line.
 
 ## Usage
 
